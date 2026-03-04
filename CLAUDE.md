@@ -21,7 +21,9 @@ src/
 │   ├── home.page.ts           # Home page (Featured section, categories, Account nav)
 │   ├── product.page.ts        # Product detail page
 │   ├── checkout.page.ts       # Cart / checkout page
-│   └── account.page.ts        # Account login page (register + returning customer sections)
+│   ├── account.page.ts        # Account login page (register + returning customer sections)
+│   ├── fragrance.page.ts      # Fragrance category page (heading + Men/Women subcategory links)
+│   └── haircare.page.ts       # Hair Care category page (heading + Conditioner/Shampoo subcategory links)
 ├── helpers/
 │   ├── cart.helper.ts          # Cart assertion helpers
 │   └── navigation.helper.ts   # Navigation utilities
@@ -29,11 +31,15 @@ src/
     └── page-fixtures.ts       # Custom test fixtures — single source of truth for DI
 
 tests/
-├── checkout-flow.spec.ts      # Checkout flow scenarios
-└── account-login.spec.ts      # Account / login page scenarios
+├── checkout-flow.spec.ts          # Checkout flow scenarios
+├── account-login.spec.ts          # Account / login page scenarios
+├── fragrance-navigation.spec.ts   # Fragrance category navigation scenarios
+└── haircare-navigation.spec.ts    # Hair Care category navigation scenarios
 
-features/                       # BDD feature files (reference only, not executed by Cucumber)
-└── account-login.feature      # Unregistered user prompted to create account
+features/                              # BDD feature files (reference only, not executed by Cucumber)
+├── account-login.feature             # Unregistered user prompted to create account
+├── fragrance-navigation.feature      # Unregistered user navigates to Fragrance section
+└── haircare-navigation.feature       # Unregistered user navigates to Hair Care section
 ```
 
 ---
@@ -240,6 +246,8 @@ newPage: async ({ page }, use) => {
 - `clickFirstFeaturedProduct(): Promise<string>` — clicks first featured item, returns its name
 - `hoverAccountLink(): Promise<void>` — hovers over Account link in top nav to reveal dropdown
 - `clickLoginInDropdown(): Promise<void>` — clicks Login in the Account dropdown, waits for navigation
+- `clickFragranceMenu(): Promise<void>` — clicks Fragrance in the category nav, waits for navigation
+- `clickHairCareMenu(): Promise<void>` — clicks Hair Care in the category nav, waits for navigation
 
 ### ProductPage (`product.page.ts`)
 - `getProductName(): Promise<string>` — returns product title text
@@ -255,6 +263,14 @@ newPage: async ({ page }, use) => {
 - `isRegisterAccountChecked(): Promise<boolean>` — true if Register Account radio is pre-selected
 - `getLoginNameValue(): Promise<string>` — current value of the Login Name input (empty = blank)
 - `getPasswordValue(): Promise<string>` — current value of the Password input (empty = blank)
+
+### FragrancePage (`fragrance.page.ts`)
+- `isOnPage(): Promise<boolean>` — returns true when the Fragrance page heading is visible
+- `hasCategoryVisible(name: string): Promise<boolean>` — true if a sub-category link with that name is visible (case-insensitive)
+
+### HairCarePage (`haircare.page.ts`)
+- `isOnPage(): Promise<boolean>` — returns true when the Hair Care page heading is visible
+- `hasCategoryVisible(name: string): Promise<boolean>` — true if a sub-category link with that name is visible (case-insensitive)
 
 ### Helpers
 - `cart.helper.ts` → `verifyProductInCart(checkoutPage, expectedName)`

@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx playwright test --reporter=list)"
+      "Bash(npx playwright test --reporter=list)",
+      "Bash(npx playwright test tests/fragrance-navigation.spec.ts)",
+      "Bash(npx playwright test)"
     ]
   }
 }

@@ -17,6 +17,10 @@ export class HomePage extends BasePage {
   private readonly accountMenuLink: Locator;
   /** Login link inside the Account dropdown (scoped to top nav to avoid duplicates). */
   private readonly loginDropdownLink: Locator;
+  /** "Fragrance" link in the category navigation menu. */
+  private readonly fragranceMenuLink: Locator;
+  /** "Hair Care" link in the category navigation menu. */
+  private readonly hairCareMenuLink: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -26,6 +30,9 @@ export class HomePage extends BasePage {
     // Scoped to #main_menu_top because the same links appear twice in the DOM
     this.accountMenuLink = page.locator('#main_menu_top a.menu_account');
     this.loginDropdownLink = page.locator('#main_menu_top a.menu_login');
+    // Category nav — scoped to #categorymenu to avoid any footer duplicates
+    this.fragranceMenuLink = page.locator('#categorymenu').getByRole('link', { name: 'Fragrance' });
+    this.hairCareMenuLink = page.locator('#categorymenu').getByRole('link', { name: 'Hair Care' });
   }
 
   /**
@@ -56,6 +63,22 @@ export class HomePage extends BasePage {
    */
   async clickLoginInDropdown(): Promise<void> {
     await this.loginDropdownLink.click();
+    await this.waitForPageLoad();
+  }
+
+  /**
+   * Clicks the "Hair Care" link in the category navigation menu and waits for navigation.
+   */
+  async clickHairCareMenu(): Promise<void> {
+    await this.hairCareMenuLink.click();
+    await this.waitForPageLoad();
+  }
+
+  /**
+   * Clicks the "Fragrance" link in the category navigation menu and waits for navigation.
+   */
+  async clickFragranceMenu(): Promise<void> {
+    await this.fragranceMenuLink.click();
     await this.waitForPageLoad();
   }
 

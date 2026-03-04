@@ -3,6 +3,8 @@ import { HomePage } from '@pages/home.page';
 import { ProductPage } from '@pages/product.page';
 import { CheckoutPage } from '@pages/checkout.page';
 import { AccountPage } from '@pages/account.page';
+import { FragrancePage } from '@pages/fragrance.page';
+import { HairCarePage } from '@pages/haircare.page';
 
 /** Shape of the custom fixture object injected into every test. */
 type PageFixtures = {
@@ -10,6 +12,8 @@ type PageFixtures = {
   productPage: ProductPage;
   checkoutPage: CheckoutPage;
   accountPage: AccountPage;
+  fragrancePage: FragrancePage;
+  hairCarePage: HairCarePage;
 };
 
 /**
@@ -28,6 +32,12 @@ export const test = base.extend<PageFixtures>({
   },
   accountPage: async ({ page }, use) => {
     await use(new AccountPage(page));
+  },
+  fragrancePage: async ({ page }, use) => {
+    await use(new FragrancePage(page));
+  },
+  hairCarePage: async ({ page }, use) => {
+    await use(new HairCarePage(page));
   },
 });
 
