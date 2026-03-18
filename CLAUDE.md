@@ -23,7 +23,10 @@ src/
 │   ├── checkout.page.ts       # Cart / checkout page
 │   ├── account.page.ts        # Account login page (register + returning customer sections)
 │   ├── fragrance.page.ts      # Fragrance category page (heading + Men/Women subcategory links)
-│   └── haircare.page.ts       # Hair Care category page (heading + Conditioner/Shampoo subcategory links)
+│   ├── haircare.page.ts       # Hair Care category page (heading + Conditioner/Shampoo subcategory links)
+│   ├── books.page.ts          # Books category page (heading + Audio CD/Paperback subcategory links)
+│   ├── men.page.ts            # Men category page (heading + subcategory links like Skincare)
+│   └── skincare.page.ts       # Skincare category page (heading + product items)
 ├── helpers/
 │   ├── cart.helper.ts          # Cart assertion helpers
 │   └── navigation.helper.ts   # Navigation utilities
@@ -34,12 +37,16 @@ tests/
 ├── checkout-flow.spec.ts          # Checkout flow scenarios
 ├── account-login.spec.ts          # Account / login page scenarios
 ├── fragrance-navigation.spec.ts   # Fragrance category navigation scenarios
-└── haircare-navigation.spec.ts    # Hair Care category navigation scenarios
+├── haircare-navigation.spec.ts    # Hair Care category navigation scenarios
+├── books-navigation.spec.ts       # Books category navigation scenarios
+└── men-skincare-navigation.spec.ts # Men category Skincare navigation scenarios
 
 features/                              # BDD feature files (reference only, not executed by Cucumber)
 ├── account-login.feature             # Unregistered user prompted to create account
 ├── fragrance-navigation.feature      # Unregistered user navigates to Fragrance section
-└── haircare-navigation.feature       # Unregistered user navigates to Hair Care section
+├── haircare-navigation.feature       # Unregistered user navigates to Hair Care section
+├── books-navigation.feature          # Unregistered user navigates to Books section
+└── men-skincare-navigation.feature   # Unregistered user navigates to Men > Skincare section
 ```
 
 ---
@@ -248,6 +255,10 @@ newPage: async ({ page }, use) => {
 - `clickLoginInDropdown(): Promise<void>` — clicks Login in the Account dropdown, waits for navigation
 - `clickFragranceMenu(): Promise<void>` — clicks Fragrance in the category nav, waits for navigation
 - `clickHairCareMenu(): Promise<void>` — clicks Hair Care in the category nav, waits for navigation
+- `clickBooksMenu(): Promise<void>` — clicks Books in the category nav, waits for navigation
+- `clickMenMenu(): Promise<void>` — clicks Men in the category nav, waits for navigation
+- `hoverMenMenu(): Promise<void>` — hovers over Men menu link to reveal subcategories
+- `clickSkincareFromMenMenu(): Promise<void>` — clicks Men's Skincare from expanded Men menu (second Skincare link)
 
 ### ProductPage (`product.page.ts`)
 - `getProductName(): Promise<string>` — returns product title text
@@ -271,6 +282,19 @@ newPage: async ({ page }, use) => {
 ### HairCarePage (`haircare.page.ts`)
 - `isOnPage(): Promise<boolean>` — returns true when the Hair Care page heading is visible
 - `hasCategoryVisible(name: string): Promise<boolean>` — true if a sub-category link with that name is visible (case-insensitive)
+
+### BooksPage (`books.page.ts`)
+- `isOnPage(): Promise<boolean>` — returns true when the Books page heading is visible
+- `hasCategoryVisible(name: string): Promise<boolean>` — true if a sub-category link with that name is visible (case-insensitive)
+
+### MenPage (`men.page.ts`)
+- `isOnPage(): Promise<boolean>` — returns true when the Men page heading is visible
+- `hasSubcategoryVisible(name: string): Promise<boolean>` — true if a sub-category link with that name is visible (case-insensitive)
+- `clickSkincareMenu(): Promise<void>` — clicks Skincare link in Men sub-category menu, waits for navigation
+
+### SkincarePage (`skincare.page.ts`)
+- `isOnPage(): Promise<boolean>` — returns true when the Skincare page heading is visible
+- `getItemCount(): Promise<number>` — returns the count of visible skincare items in the section
 
 ### Helpers
 - `cart.helper.ts` → `verifyProductInCart(checkoutPage, expectedName)`

@@ -21,6 +21,10 @@ export class HomePage extends BasePage {
   private readonly fragranceMenuLink: Locator;
   /** "Hair Care" link in the category navigation menu. */
   private readonly hairCareMenuLink: Locator;
+  /** "Books" link in the category navigation menu. */
+  private readonly booksMenuLink: Locator;
+  /** "Men" link in the category navigation menu. */
+  private readonly menMenuLink: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -33,6 +37,8 @@ export class HomePage extends BasePage {
     // Category nav — scoped to #categorymenu to avoid any footer duplicates
     this.fragranceMenuLink = page.locator('#categorymenu').getByRole('link', { name: 'Fragrance' });
     this.hairCareMenuLink = page.locator('#categorymenu').getByRole('link', { name: 'Hair Care' });
+    this.booksMenuLink = page.locator('#categorymenu').getByRole('link', { name: 'Books' });
+    this.menMenuLink = page.locator('#categorymenu').getByRole('link', { name: 'Men' });
   }
 
   /**
@@ -79,6 +85,43 @@ export class HomePage extends BasePage {
    */
   async clickFragranceMenu(): Promise<void> {
     await this.fragranceMenuLink.click();
+    await this.waitForPageLoad();
+  }
+
+  /**
+   * Clicks the "Books" link in the category navigation menu and waits for navigation.
+   */
+  async clickBooksMenu(): Promise<void> {
+    await this.booksMenuLink.click();
+    await this.waitForPageLoad();
+  }
+
+  /**
+   * Clicks the "Men" link in the category navigation menu and waits for navigation.
+   */
+  async clickMenMenu(): Promise<void> {
+    await this.menMenuLink.click();
+    await this.waitForPageLoad();
+  }
+
+  /**
+   * Hovers over the "Men" menu link to reveal subcategory options.
+   */
+  async hoverMenMenu(): Promise<void> {
+    await this.menMenuLink.hover();
+    // Give the submenu time to appear
+    await this.page.waitForTimeout(500);
+  }
+
+  /**
+   * Clicks the "Skincare" link from the expanded Men menu dropdown and waits for navigation.
+   * Call {@link hoverMenMenu} first to ensure the dropdown is visible.
+   * There are two Skincare links: Women's (first) and Men's (second), so we target the second.
+   */
+  async clickSkincareFromMenMenu(): Promise<void> {
+    // The Men menu has two Skincare sub-links: Women's Skincare (first) and Men's Skincare (second)
+    const skincareLink = this.page.locator('#categorymenu').getByRole('link', { name: 'Skincare' }).nth(1);
+    await skincareLink.click();
     await this.waitForPageLoad();
   }
 
