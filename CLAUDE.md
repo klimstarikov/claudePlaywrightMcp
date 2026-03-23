@@ -39,14 +39,16 @@ tests/
 ├── fragrance-navigation.spec.ts   # Fragrance category navigation scenarios
 ├── haircare-navigation.spec.ts    # Hair Care category navigation scenarios
 ├── books-navigation.spec.ts       # Books category navigation scenarios
-└── men-skincare-navigation.spec.ts # Men category Skincare navigation scenarios
+├── men-skincare-navigation.spec.ts # Men category Skincare navigation scenarios
+└── home-page-sections.spec.ts     # Home page sections visibility scenarios
 
 features/                              # BDD feature files (reference only, not executed by Cucumber)
 ├── account-login.feature             # Unregistered user prompted to create account
 ├── fragrance-navigation.feature      # Unregistered user navigates to Fragrance section
 ├── haircare-navigation.feature       # Unregistered user navigates to Hair Care section
 ├── books-navigation.feature          # Unregistered user navigates to Books section
-└── men-skincare-navigation.feature   # Unregistered user navigates to Men > Skincare section
+├── men-skincare-navigation.feature   # Unregistered user navigates to Men > Skincare section
+└── home-page-sections.feature        # Unregistered user sees all main sections on the home page
 ```
 
 ---
@@ -259,6 +261,7 @@ newPage: async ({ page }, use) => {
 - `clickMenMenu(): Promise<void>` — clicks Men in the category nav, waits for navigation
 - `hoverMenMenu(): Promise<void>` — hovers over Men menu link to reveal subcategories
 - `clickSkincareFromMenMenu(): Promise<void>` — clicks Men's Skincare from expanded Men menu (second Skincare link)
+- `hasSectionVisible(name: string): Promise<boolean>` — returns true if a section heading with that name is visible on the home page
 
 ### ProductPage (`product.page.ts`)
 - `getProductName(): Promise<string>` — returns product title text
