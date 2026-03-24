@@ -126,6 +126,15 @@ export class HomePage extends BasePage {
   }
 
   /**
+   * Returns true if a home-page section with the given heading text is visible.
+   * Matches the section heading role elements (case-insensitive, partial match).
+   */
+  async hasSectionVisible(name: string): Promise<boolean> {
+    const heading = this.page.getByRole('heading', { name, exact: false });
+    return this.isElementVisible(heading);
+  }
+
+  /**
    * Clicks the first featured product's name link. Captures and returns the
    * product name text before clicking so it can be asserted downstream.
    * NOTE: The site has a typo in the CSS class — `prdocutname` is intentional.

@@ -35,14 +35,16 @@ tests/
 ├── fragrance-navigation.spec.ts   # Fragrance category navigation scenarios
 ├── haircare-navigation.spec.ts    # Hair Care category navigation scenarios
 ├── books-navigation.spec.ts       # Books category navigation scenarios
-└── men-skincare-navigation.spec.ts # Men category Skincare navigation scenarios
+├── men-skincare-navigation.spec.ts # Men category Skincare navigation scenarios
+└── home-page-sections.spec.ts     # Home page sections visibility scenarios
 
 features/                              # BDD feature files (living docs only, not executed by Cucumber)
 ├── account-login.feature
 ├── fragrance-navigation.feature
 ├── haircare-navigation.feature
 ├── books-navigation.feature
-└── men-skincare-navigation.feature
+├── men-skincare-navigation.feature
+└── home-page-sections.feature
 ```
 
 ---
@@ -179,6 +181,7 @@ Never remove or rename existing fixtures.
 - `clickMenMenu(): Promise<void>` — clicks Men in category nav
 - `hoverMenMenu(): Promise<void>` — hovers over Men menu to reveal subcategories
 - `clickSkincareFromMenMenu(): Promise<void>` — clicks Men's Skincare from expanded Men menu (second Skincare link)
+- `hasSectionVisible(name: string): Promise<boolean>` — returns true if a section heading with that name is visible on the home page
 
 ### ProductPage (`product.page.ts`)
 - `getProductName(): Promise<string>`
