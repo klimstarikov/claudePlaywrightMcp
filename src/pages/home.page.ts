@@ -147,4 +147,44 @@ export class HomePage extends BasePage {
     await nameLink.click();
     return productName.trim();
   }
+
+  /**
+   * Scrolls the Featured products section into view.
+   */
+  async scrollToFeaturedSection(): Promise<void> {
+    await this.featuredSection.scrollIntoViewIfNeeded();
+  }
+
+  /**
+   * Returns the name of the first product in the Featured section that has a
+   * strikethrough (original) price, indicating a price reduction.
+   * Throws if no such product is found.
+   */
+  async getFirstFeaturedProductNameWithStrikethroughPrice(): Promise<string> {
+    const count = await this.featuredItems.count();
+    for (let i = 0; i < count; i++) {
+      const item = this.featuredItems.nth(i);
+      const hasOldPrice = await item.locator('.priceold').isVisible();
+      if (hasOldPrice) {
+        return (await item.locator('a.prdocutname').innerText()).trim();
+      }
+    }
+    throw new Error('No featured product with a strikethrough price found on the home page');
+  }
+
+  /**
+   * Returns true if the featured product card matching the given name
+   * displays a 'Sale' tag (`span.sale`).
+   */
+  async featuredProductHasSaleTag(productName: string): Promise<boolean> {
+    const count = await this.featuredItems.count();
+    for (let i = 0; i < count; i++) {
+      const item = this.featuredItems.nth(i);
+      const name = (await item.locator('a.prdocutname').innerText()).trim();
+      if (name.toLowerCase() === productName.toLowerCase()) {
+        return item.locator('span.sale').isVisible();
+      }
+    }
+    return false;
+  }
 }
