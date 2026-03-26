@@ -45,7 +45,7 @@ Read `/memories/session/jira-auth.md` (if it exists) to check for previously res
 When credentials are already in session memory, make the API call directly:
 
 ```
-GET <JIRA_BASE_URL>/rest/api/3/issue/<ISSUE_KEY>?fields=summary,description,status,issuetype,priority,assignee,labels,fixVersions
+GET <JIRA_BASE_URL>/rest/api/3/issue/<ISSUE_KEY>?fields=summary,description,status,issuetype,priority,assignee,labels,fixVersions,attachment
 Authorization: Basic <base64("<JIRA_USER_EMAIL>:<JIRA_API_TOKEN>")>
 Content-Type: application/json
 ```
@@ -53,7 +53,7 @@ Content-Type: application/json
 When credentials are NOT in session memory, invoke the `@jira` subagent with this prompt:
 
 ```
-Fetch the JIRA issue <ISSUE_KEY> and return only the structured data (title, description rendered as plain text, and any acceptance criteria found in the description). Do NOT call @generate-test-cases or perform any handoff — return the data directly.
+Fetch the JIRA issue <ISSUE_KEY> and return only the structured data (title, description rendered as plain text, any acceptance criteria found in the description, and the full attachment list including filename, mimeType, and content URL for each attachment). Do NOT call @generate-test-cases or perform any handoff — return the data directly.
 ```
 
 The subagent handles all authentication logic. Use the data it returns as the DESCRIPTION and AC inputs for Step 1.
@@ -70,11 +70,25 @@ The subagent handles all authentication logic. Use the data it returns as the DE
 **On HTTP 403:** the account lacks permission to view this issue. Stop and notify the user.
 **On HTTP 404:** the issue key was not found. Stop and notify the user.
 
-### 0e — Map JIRA fields to inputs
+### 0e — Fetch and Analyse Screenshot Attachments
 
-Once the issue data is resolved, set:
+After the issue is fetched, inspect `fields.attachment` (an array; may be empty or absent — handle gracefully):
+
+1. **Filter** — keep only entries where `mimeType` starts with `image/` (e.g. `image/png`, `image/jpeg`, `image/gif`).
+2. **Download** — for each filtered attachment, fetch its binary content from the `content` URL using the same `Authorization: Basic …` header. Use the `web/fetch` tool.
+3. **Analyse** — examine each downloaded image visually. Note:
+   - UI elements, layouts, and component states visible in the screenshot
+   - Any error messages, validation states, or edge-case UI flows shown
+   - Any data, labels, or field names that appear which are not mentioned in the AC text
+4. **Record** — store your observations as **SCREENSHOTS_CONTEXT** (a bullet list of findings per image, referenced by filename).
+5. **If no image attachments exist** — set SCREENSHOTS_CONTEXT to empty and continue.
+
+### 0f — Map JIRA fields to inputs
+
+Once the issue data and attachments are resolved, set:
 - **DESCRIPTION** ← JIRA `summary` + rendered `description`
 - **AC** ← any acceptance criteria extracted from the description (look for sections headed "Acceptance Criteria", "AC", or numbered lists)
+- **SCREENSHOTS_CONTEXT** ← visual observations from Step 0e (empty if no images)
 - **JIRA_ISSUE_KEY** ← the validated key (used in the output filename)
 
 Proceed to Step 1 using these mapped inputs.
@@ -96,6 +110,10 @@ Before writing any test cases, reason through:
    - **P2 High** — Important negative paths; data-integrity or security risk
    - **P3 Medium** — Edge cases that affect real users under realistic conditions
    - **P4 Low** — Rare edge cases, cosmetic checks, low-risk scenarios
+5. **Visual context** _(apply only when SCREENSHOTS_CONTEXT is non-empty)_ — Review the screenshot observations recorded in Step 0e. Identify any UI states, flows, field names, error messages, or edge conditions visible in the images that are absent from the AC text. Use these findings to:
+   - Add missing test cases that cover UI-only behaviours
+   - Refine step wording to match exact labels or messages shown on screen
+   - Increase or decrease priority of existing cases based on visual complexity
 
 Write your analysis as an HTML comment `<!-- … -->` at the top of the test cases section in the output file.
 

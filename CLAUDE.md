@@ -40,7 +40,8 @@ tests/
 ├── haircare-navigation.spec.ts    # Hair Care category navigation scenarios
 ├── books-navigation.spec.ts       # Books category navigation scenarios
 ├── men-skincare-navigation.spec.ts # Men category Skincare navigation scenarios
-└── home-page-sections.spec.ts     # Home page sections visibility scenarios
+├── home-page-sections.spec.ts     # Home page sections visibility scenarios
+└── sale-tags.spec.ts              # Sale tag visibility on products with price reductions
 
 features/                              # BDD feature files (reference only, not executed by Cucumber)
 ├── account-login.feature             # Unregistered user prompted to create account
@@ -48,7 +49,8 @@ features/                              # BDD feature files (reference only, not 
 ├── haircare-navigation.feature       # Unregistered user navigates to Hair Care section
 ├── books-navigation.feature          # Unregistered user navigates to Books section
 ├── men-skincare-navigation.feature   # Unregistered user navigates to Men > Skincare section
-└── home-page-sections.feature        # Unregistered user sees all main sections on the home page
+├── home-page-sections.feature        # Unregistered user sees all main sections on the home page
+└── sale-tags.feature                 # Products with price reductions display a 'Sale' tag
 ```
 
 ---
@@ -262,6 +264,9 @@ newPage: async ({ page }, use) => {
 - `hoverMenMenu(): Promise<void>` — hovers over Men menu link to reveal subcategories
 - `clickSkincareFromMenMenu(): Promise<void>` — clicks Men's Skincare from expanded Men menu (second Skincare link)
 - `hasSectionVisible(name: string): Promise<boolean>` — returns true if a section heading with that name is visible on the home page
+- `scrollToFeaturedSection(): Promise<void>` — scrolls the Featured products section into view
+- `getFirstFeaturedProductNameWithStrikethroughPrice(): Promise<string>` — returns name of first featured product that has a strikethrough (original) price
+- `featuredProductHasSaleTag(productName: string): Promise<boolean>` — returns true if the named featured product card has a 'Sale' tag
 
 ### ProductPage (`product.page.ts`)
 - `getProductName(): Promise<string>` — returns product title text
