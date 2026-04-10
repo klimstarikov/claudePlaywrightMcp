@@ -1,7 +1,7 @@
 ---
 name: generate-test-cases
-description: Generates a comprehensive, prioritised BDD test case suite in Gherkin format from textual Acceptance Criteria, a feature description, and optional reference scenarios. Saves the output as a Markdown file in the project root. Also accepts a JIRA issue key or URL as input and fetches the required fields automatically.
-argument-hint: "JIRA issue key (e.g. PROJ-123 or https://jira.example.com/browse/PROJ-123), OR Feature description, Acceptance Criteria (numbered list), and optionally existing Gherkin scenarios"
+description: Generates a comprehensive, prioritised BDD test case suite in Gherkin format from textual Acceptance Criteria, a feature description, and optional reference scenarios. Saves the output to the test-cases-output/ folder. Also accepts a JIRA issue key or URL as input and fetches the required fields automatically. Optionally reads .png screenshots from the input-images/ folder to enrich test coverage with visual context.
+argument-hint: "JIRA issue key (e.g. PROJ-123 or https://jira.example.com/browse/PROJ-123), OR Feature description, Acceptance Criteria (numbered list), and optionally existing Gherkin scenarios. Place any .png screenshots in input-images/ before running."
 tools: [vscode/getProjectSetupInfo, vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/runCommand, vscode/vscodeAPI, vscode/extensions, vscode/askQuestions, execute/runNotebookCell, execute/testFailure, execute/getTerminalOutput, execute/awaitTerminal, execute/killTerminal, execute/createAndRunTask, execute/runInTerminal, execute/runTests, read/getNotebookSummary, read/problems, read/readFile, read/readNotebookCellOutput, read/terminalSelection, read/terminalLastCommand, agent/runSubagent, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/searchResults, search/textSearch, search/usages, web/fetch, web/githubRepo, browser/openBrowserPage]
 ---
 
@@ -13,6 +13,7 @@ The user will provide one of the following:
   1. **DESCRIPTION** _(optional)_ — a feature or user story description
   2. **AC** _(optional)_ — acceptance criteria (numbered list or bullets)
   3. **SCENARIOS** _(optional)_ — reference Gherkin scenarios
+  4. **IMAGES** _(optional)_ — `.png` screenshot files placed in the `input-images/` folder in the project root before invocation; the agent will read and analyse all `.png` files found there
 
 If any input is missing, infer reasonable coverage from the others. Do not ask clarifying questions. Work autonomously.
 
@@ -70,25 +71,25 @@ The subagent handles all authentication logic. Use the data it returns as the DE
 **On HTTP 403:** the account lacks permission to view this issue. Stop and notify the user.
 **On HTTP 404:** the issue key was not found. Stop and notify the user.
 
-### 0e — Fetch and Analyse Screenshot Attachments
+### 0e — Read and Analyse Local Screenshot Images
 
-After the issue is fetched, inspect `fields.attachment` (an array; may be empty or absent — handle gracefully):
+List the contents of the `input-images/` folder in the project root:
 
-1. **Filter** — keep only entries where `mimeType` starts with `image/` (e.g. `image/png`, `image/jpeg`, `image/gif`).
-2. **Download** — for each filtered attachment, fetch its binary content from the `content` URL using the same `Authorization: Basic …` header. Use the `web/fetch` tool.
-3. **Analyse** — examine each downloaded image visually. Note:
+1. **Scan** — list all files in `input-images/`. Keep only files with a `.png` extension (case-insensitive).
+2. **Read** — for each `.png` file found, read it using the `read/readFile` tool (or equivalent image-viewing capability).
+3. **Analyse** — examine each image visually. Note:
    - UI elements, layouts, and component states visible in the screenshot
    - Any error messages, validation states, or edge-case UI flows shown
    - Any data, labels, or field names that appear which are not mentioned in the AC text
 4. **Record** — store your observations as **SCREENSHOTS_CONTEXT** (a bullet list of findings per image, referenced by filename).
-5. **If no image attachments exist** — set SCREENSHOTS_CONTEXT to empty and continue.
+5. **If no `.png` files exist in `input-images/`** — set SCREENSHOTS_CONTEXT to empty and continue.
 
 ### 0f — Map JIRA fields to inputs
 
-Once the issue data and attachments are resolved, set:
+Once the issue data is resolved, set:
 - **DESCRIPTION** ← JIRA `summary` + rendered `description`
 - **AC** ← any acceptance criteria extracted from the description (look for sections headed "Acceptance Criteria", "AC", or numbered lists)
-- **SCREENSHOTS_CONTEXT** ← visual observations from Step 0e (empty if no images)
+- **SCREENSHOTS_CONTEXT** ← visual observations from Step 0e (empty if no images found in `input-images/`)
 - **JIRA_ISSUE_KEY** ← the validated key (used in the output filename)
 
 Proceed to Step 1 using these mapped inputs.
@@ -110,7 +111,7 @@ Before writing any test cases, reason through:
    - **P2 High** — Important negative paths; data-integrity or security risk
    - **P3 Medium** — Edge cases that affect real users under realistic conditions
    - **P4 Low** — Rare edge cases, cosmetic checks, low-risk scenarios
-5. **Visual context** _(apply only when SCREENSHOTS_CONTEXT is non-empty)_ — Review the screenshot observations recorded in Step 0e. Identify any UI states, flows, field names, error messages, or edge conditions visible in the images that are absent from the AC text. Use these findings to:
+5. **Visual context** _(apply only when SCREENSHOTS_CONTEXT is non-empty)_ — Review the screenshot observations recorded in Step 0e (sourced from `input-images/`). Identify any UI states, flows, field names, error messages, or edge conditions visible in the images that are absent from the AC text. Use these findings to:
    - Add missing test cases that cover UI-only behaviours
    - Refine step wording to match exact labels or messages shown on screen
    - Increase or decrease priority of existing cases based on visual complexity
@@ -172,7 +173,7 @@ Order all test cases:
 
 ## Step 5 — Save the Output File
 
-Filename: `[<JIRA_ISSUE_KEY>]test-cases-<kebab-case-feature-name><DD_MM_YYYY>.md` in the **project root**.
+Filename: `[<JIRA_ISSUE_KEY>]test-cases-<kebab-case-feature-name><DD_MM_YYYY>.md` saved inside the **`test-cases-output/`** folder in the project root.
 
 Use this exact structure:
 
@@ -220,8 +221,9 @@ Use this exact structure:
 - [ ] File is sorted P1→P4, Positive→Negative→Edge within each band
 - [ ] Summary table row count equals total test cases written
 - [ ] Coverage matrix accounts for every AC provided
-- [ ] File is saved to the project root with the correct filename
+- [ ] File is saved to `test-cases-output/` with the correct filename
 
 ## Additional Tips
 - Always create a new file for each run — do not overwrite or edit existing test case files. This preserves the history of test case generation and allows for easy comparison between iterations.
-- Never add or edit any other files except for the new test case Markdown file. Do not modify any source code, documentation, or configuration files in the project.
+- Never add or edit any other files except for the new test case Markdown file inside `test-cases-output/`. Do not modify any source code, documentation, or configuration files in the project.
+- Place any `.png` screenshots intended as visual input in the `input-images/` folder before running the agent. The agent will automatically detect and analyse all `.png` files present there. Clear the folder between runs if the images are not relevant to the current feature.
