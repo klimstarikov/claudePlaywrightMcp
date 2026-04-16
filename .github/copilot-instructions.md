@@ -37,8 +37,9 @@ tests/
 ├── books-navigation.spec.ts       # Books category navigation scenarios
 ├── men-skincare-navigation.spec.ts # Men category Skincare navigation scenarios
 ├── home-page-sections.spec.ts     # Home page sections visibility scenarios
-└── sale-tags.spec.ts              # Sale tag visibility on products with price reductions
-
+├── sale-tags.spec.ts              # Sale tag visibility on products with price reductions
+ 
+ 
 features/                              # BDD feature files (living docs only, not executed by Cucumber)
 ├── account-login.feature
 ├── fragrance-navigation.feature
@@ -184,7 +185,7 @@ Never remove or rename existing fixtures.
 - `hoverMenMenu(): Promise<void>` — hovers over Men menu to reveal subcategories
 - `clickSkincareFromMenMenu(): Promise<void>` — clicks Men's Skincare from expanded Men menu (second Skincare link)
 - `hasSectionVisible(name: string): Promise<boolean>` — returns true if a section heading with that name is visible on the home page
-- `scrollToFeaturedSection(): Promise<void>` — scrolls the Featured products section into view
+- `scrollToFeaturedSection(): Promise<void>` — scrolls the featured products section into view
 - `getFirstFeaturedProductNameWithStrikethroughPrice(): Promise<string>` — returns name of first featured product that has a strikethrough (original) price
 - `featuredProductHasSaleTag(productName: string): Promise<boolean>` — returns true if the named featured product card has a 'Sale' tag
 

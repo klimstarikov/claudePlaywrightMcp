@@ -1,10 +1,10 @@
 import { test, expect } from '../src/fixtures/page-fixtures';
 
 test.describe('Sales tag for products on sale', () => {
-  test('Non-logged-in user sees Sale tag on product with strikethrough price on Home page', async ({ homePage }) => {
-    let productName: string;
+  test("Non-logged-in user sees 'Sale' tag on product with strikethrough price on Home page", async ({ homePage }) => {
+    let discountedProductName = '';
 
-    await test.step('Given a non-logged-in user is on the Home page', async () => {
+    await test.step('Given a non-logged-in user is on the Home page at "https://automationteststore.com/"', async () => {
       await homePage.open();
     });
 
@@ -13,11 +13,13 @@ test.describe('Sales tag for products on sale', () => {
     });
 
     await test.step('And a product with a strikethrough original price is visible in the featured products section', async () => {
-      productName = await homePage.getFirstFeaturedProductNameWithStrikethroughPrice();
+      discountedProductName = await homePage.getFirstFeaturedProductNameWithStrikethroughPrice();
+      expect(discountedProductName).not.toEqual('');
     });
 
     await test.step('Then that product displays a "Sale" tag', async () => {
-      expect(await homePage.featuredProductHasSaleTag(productName!)).toBe(true);
+      expect(await homePage.featuredProductHasSaleTag(discountedProductName)).toBe(true);
     });
   });
 });
+
