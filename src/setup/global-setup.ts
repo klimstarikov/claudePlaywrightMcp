@@ -2,6 +2,7 @@ import { chromium, type FullConfig } from '@playwright/test';
 import * as path from 'path';
 import * as fs from 'fs';
 import { KARL_DAVIES } from '../test-data/users';
+import { AccountPage } from '../pages/account.page';
 
 /**
  * Playwright global setup: logs in as KARL_DAVIES via the UI and saves
@@ -22,12 +23,11 @@ async function globalSetup(config: FullConfig): Promise<void> {
   const context = await browser.newContext({ baseURL });
   const page = await context.newPage();
 
-  // Navigate to the login page and authenticate
+  // Navigate to the login page and authenticate via the AccountPage POM
+  const accountPage = new AccountPage(page);
   await page.goto('index.php?rt=account/login');
-  await page.locator('#loginFrm_loginname').fill(KARL_DAVIES.credentials.username);
-  await page.locator('#loginFrm_password').fill(KARL_DAVIES.credentials.password);
-  await page.locator('button[title="Login"]').click();
-  await page.waitForLoadState('domcontentloaded');
+  await accountPage.login(KARL_DAVIES.credentials.username, KARL_DAVIES.credentials.password);
+  await page.waitForURL(/rt=account\/account/, { timeout: 15_000 });
 
   // Persist storage state for reuse across authenticated tests
   await context.storageState({ path: path.join(authDir, 'karl-davies.json') });

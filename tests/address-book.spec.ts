@@ -10,7 +10,6 @@ test.describe('Address Book verification', () => {
       // Authentication is provided via saved storage state (global setup).
       // No UI login steps needed — the browser context already carries
       // KARL_DAVIES session cookies.
-      await loggedInMyAccountPage.navigateTo();
     });
 
     await test.step('When user navigates to the Account page', async () => {

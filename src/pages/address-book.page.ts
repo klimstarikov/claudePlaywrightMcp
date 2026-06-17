@@ -27,7 +27,7 @@ export class AddressBookPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.pageHeading = page.locator('h1.heading1');
+    this.pageHeading = page.locator('h1.heading1').filter({ hasText: 'Address Book' });
     this.firstAddressCell = page.locator('table tbody tr:first-child td:first-child address');
   }
 
