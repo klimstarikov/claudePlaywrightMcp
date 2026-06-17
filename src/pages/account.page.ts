@@ -53,4 +53,15 @@ export class AccountPage extends BasePage {
   async getPasswordValue(): Promise<string> {
     return this.passwordInput.inputValue();
   }
+
+  /**
+   * Fills in the login form with the provided credentials and submits it,
+   * then waits for the page to load (redirects to My Account on success).
+   */
+  async login(username: string, password: string): Promise<void> {
+    await this.loginNameInput.fill(username);
+    await this.passwordInput.fill(password);
+    await this.page.locator('button[title="Login"]').click();
+    await this.waitForPageLoad();
+  }
 }
