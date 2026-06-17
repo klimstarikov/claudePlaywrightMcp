@@ -1,4 +1,5 @@
-import { test as base, expect } from '@playwright/test';
+import { test as base, expect, type Page } from '@playwright/test';
+import * as path from 'path';
 import { HomePage } from '@pages/home.page';
 import { ProductPage } from '@pages/product.page';
 import { CheckoutPage } from '@pages/checkout.page';
@@ -8,6 +9,11 @@ import { HairCarePage } from '@pages/haircare.page';
 import { BooksPage } from '@pages/books.page';
 import { MenPage } from '@pages/men.page';
 import { SkincarePage } from '@pages/skincare.page';
+import { MyAccountPage } from '@pages/my-account.page';
+import { AddressBookPage } from '@pages/address-book.page';
+
+/** Path to the saved storage state produced by global setup. */
+const KARL_DAVIES_AUTH = path.resolve('.auth', 'karl-davies.json');
 
 /** Shape of the custom fixture object injected into every test. */
 type PageFixtures = {
@@ -20,6 +26,21 @@ type PageFixtures = {
   booksPage: BooksPage;
   menPage: MenPage;
   skincarePage: SkincarePage;
+  myAccountPage: MyAccountPage;
+  addressBookPage: AddressBookPage;
+  /**
+   * A `Page` that starts with the KARL_DAVIES storage state already applied,
+   * so the test runs as an authenticated user without going through the login UI.
+   * Use this fixture in tests that require a logged-in session but are NOT
+   * testing login / logout behaviour themselves.
+   */
+  loggedInPage: Page;
+  /**
+   * Page objects instantiated against the authenticated `loggedInPage`.
+   * Use these alongside `loggedInPage` in tests that need auth.
+   */
+  loggedInMyAccountPage: MyAccountPage;
+  loggedInAddressBookPage: AddressBookPage;
 };
 
 /**
@@ -53,6 +74,33 @@ export const test = base.extend<PageFixtures>({
   },
   skincarePage: async ({ page }, use) => {
     await use(new SkincarePage(page));
+  },
+  myAccountPage: async ({ page }, use) => {
+    await use(new MyAccountPage(page));
+  },
+  addressBookPage: async ({ page }, use) => {
+    await use(new AddressBookPage(page));
+  },
+
+  // ---------------------------------------------------------------------------
+  // Authenticated fixtures — use the saved storage state from global setup
+  // ---------------------------------------------------------------------------
+
+  loggedInPage: async ({ browser }, use) => {
+    const context = await browser.newContext({
+      storageState: KARL_DAVIES_AUTH,
+    });
+    const authPage = await context.newPage();
+    await use(authPage);
+    await context.close();
+  },
+
+  loggedInMyAccountPage: async ({ loggedInPage }, use) => {
+    await use(new MyAccountPage(loggedInPage));
+  },
+
+  loggedInAddressBookPage: async ({ loggedInPage }, use) => {
+    await use(new AddressBookPage(loggedInPage));
   },
 });
 

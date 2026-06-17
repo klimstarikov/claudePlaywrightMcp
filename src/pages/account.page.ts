@@ -14,6 +14,8 @@ export class AccountPage extends BasePage {
   private readonly loginNameInput: Locator;
   /** Password input in the returning-customer section. */
   private readonly passwordInput: Locator;
+  /** Login submit button in the returning-customer section. */
+  private readonly loginButton: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -21,6 +23,7 @@ export class AccountPage extends BasePage {
     this.registerAccountRadio = page.locator('#accountFrm_accountregister');
     this.loginNameInput = page.locator('#loginFrm_loginname');
     this.passwordInput = page.locator('#loginFrm_password');
+    this.loginButton = page.locator('button[title="Login"]');
   }
 
   /**
@@ -52,5 +55,16 @@ export class AccountPage extends BasePage {
    */
   async getPasswordValue(): Promise<string> {
     return this.passwordInput.inputValue();
+  }
+
+  /**
+   * Fills in the login form with the provided credentials and submits it,
+   * then waits for the page to load (redirects to My Account on success).
+   */
+  async login(username: string, password: string): Promise<void> {
+    await this.loginNameInput.fill(username);
+    await this.passwordInput.fill(password);
+    await this.loginButton.click();
+    await this.waitForPageLoad();
   }
 }

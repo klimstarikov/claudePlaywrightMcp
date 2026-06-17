@@ -5,7 +5,29 @@
       "Bash(npx playwright test tests/fragrance-navigation.spec.ts)",
       "Bash(npx playwright test)",
       "Bash(pip install:*)",
-      "Bash(pip3 install:*)"
+      "Bash(pip3 install:*)",
+      "Bash(cat /Users/Klim_Starykau/claudePlaywrightMcp/.claude/settings.json 2>/dev/null; echo \"---\"; cat /Users/Klim_Starykau/.claude/settings.json 2>/dev/null)",
+      "Read(//Users/Klim_Starykau/.claude/**)",
+      "Bash(ls /Users/Klim_Starykau/claudePlaywrightMcp/.claude/ 2>/dev/null; echo \"---\"; ls /Users/Klim_Starykau/.claude/ 2>/dev/null)",
+      "Bash(python3 -m json.tool)",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('/Users/Klim_Starykau/.claude/settings.json'\\)\\); print\\(json.dumps\\(d.get\\('mcpServers', {}\\), indent=2\\)\\); print\\('plugins:', json.dumps\\(d.get\\('plugins', []\\), indent=2\\)\\)\")",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\('/Users/Klim_Starykau/claudePlaywrightMcp/.claude/settings.local.json'\\)\\); print\\(json.dumps\\(d, indent=2\\)\\)\")",
+      "Bash(claude mcp *)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_snapshot",
+      "Bash(gh pr *)",
+      "mcp__playwright__browser_fill_form",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_evaluate",
+      "Bash(npx playwright *)",
+      "Bash(npx tsc *)",
+      "Skill(git-workflow)",
+      "Bash(git --no-pager diff main...leap_agent --stat)",
+      "Bash(git --no-pager diff main...leap_agent)",
+      "Bash(git config *)",
+      "mcp__github__get_pull_request",
+      "mcp__github__get_pull_request_files",
+      "Bash(git *)"
     ]
   }
 }

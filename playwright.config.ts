@@ -4,6 +4,7 @@ export default defineConfig({
   testDir: './tests',
   // Playwright 1.44+ resolves tsconfig path aliases automatically
   tsconfig: './tsconfig.json',
+  globalSetup: './src/setup/global-setup.ts',
   timeout: 30_000,
   expect: {
     timeout: 10_000,
